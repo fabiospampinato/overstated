@@ -20,7 +20,7 @@ class Container<State extends object = {}, Context extends object | undefined = 
 
     super ();
 
-    autosuspend ( this );
+    setTimeout ( () => autosuspend ( this ) ); // Ensuring instance arrow functions are supports too
 
   }
 
