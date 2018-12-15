@@ -28,12 +28,12 @@
   ],
   "dependencies": {
     "unstated": "^2.1.1",
-    "unstated-compose": "^1.0.5",
+    "unstated-compose": "^1.0.7",
     "unstated-connect2": "^1.1.7",
     "unstated-debug": "^0.3.2",
     "unstated-hmr": "^1.0.6",
-    "unstated-suspense-autosuspend": "^1.0.1",
-    "unstated-suspense-middleware": "^1.0.3"
+    "unstated-suspense-autosuspend": "^1.1.0",
+    "unstated-suspense-middleware": "^1.1.0"
   },
   "devDependencies": {
     "@types/node": "^10.9.4",
