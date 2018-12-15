@@ -14,7 +14,7 @@ import * as debug from 'unstated-debug';
 class Container<State extends object = {}, Context extends object | undefined = undefined> extends BaseContainer<State> {
 
   ctx: Context;
-  autosuspend?: false | { bubbles?: number, methods?: RegExp, middlewares?: boolean };
+  autosuspend?: false | Partial<{ bubbles: number, methods: RegExp, middlewares: boolean }>;
 
   constructor () {
 
