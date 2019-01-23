@@ -17,7 +17,7 @@ Overstated provides everything that you need to develop complex applications, in
 - You'll probably want to use Hot-Module-Replacement during development, but by default unstated doesn't preserve the state, so I made [unstated-hmr](https://github.com/fabiospampinato/unstated-hmr) which solves that.
 - You'll probably also want access to your application's container at run time and debugging logs everytime the state changes during development, so you should use [unstated-debug](https://github.com/sindresorhus/unstated-debug) for that.
 
-All these features are included into overstated, no need to import multiple packages, and no need to configure things like [unstated-suspense-autosuspend](https://github.com/fabiospampinato/unstated-suspense-autosuspend) on your own.
+All these features are included into overstated, no need to import multiple packages, but you need to configure [unstated-suspense-autosuspend](https://github.com/fabiospampinato/unstated-suspense-autosuspend) on your own as it's not possible to support all use cases automatically.
 
 ## Install
 
@@ -30,7 +30,7 @@ npm install --save overstated
 You should read [unstated](https://github.com/jamiebuilds/unstated)'s and all the plugins' documentations.
 
 ```ts
-import {Container, Provider, Subscribe, compose, connect, debug, HMR} from 'overstated';
+import {Container, Provider, Subscribe, autosuspend, compose, connect, debug, HMR} from 'overstated';
 ```
 
 ## License

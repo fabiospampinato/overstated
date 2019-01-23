@@ -12,20 +12,10 @@ import * as debug from 'unstated-debug';
 /* OVERSTATED */
 
 class Container<State extends object = {}, Context extends object | undefined = undefined> extends BaseContainer<State> {
-
   ctx: Context;
   autosuspend?: false | Partial<{ bubbles: number, methods: RegExp, middlewares: boolean }>;
-
-  constructor () {
-
-    super ();
-
-    setTimeout ( () => autosuspend ( this ) ); // Ensuring instance arrow functions are supports too
-
-  }
-
 }
 
 /* EXPORT */
 
-export {Container, Provider, Subscribe, compose, connect, debug, HMR};
+export {Container, Provider, Subscribe, autosuspend, compose, connect, debug, HMR};
