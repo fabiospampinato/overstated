@@ -1,7 +1,7 @@
 {
   "name": "overstated",
   "description": "React state management library that's delightful to use, without sacrificing performance or scalability.",
-  "version": "1.1.3",
+  "version": "2.0.0-beta.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
