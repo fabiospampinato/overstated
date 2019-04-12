@@ -14,7 +14,7 @@ const cache = new Map<StoreType, boolean> ();
 
 const defaultOptions: AutosuspendOptions = {
   bubbles: Infinity, // How many levels to bubble up the suspension
-  methods: /^(?!_|middleware|(?:(?:get|has|is)(?![a-z0-9])))/i // Methods matching this regex will be autosuspended
+  methods: /^(?!_|(?:(?:get|has|is)(?![a-z0-9])))/i // Methods matching this regex will be autosuspended
 };
 
 function autosuspend ( store: StoreType, storeOptions: AutosuspendOptions | false | undefined = store.autosuspendOptions ) {

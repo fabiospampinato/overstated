@@ -6,9 +6,9 @@ React state management library that's delightful to use, without sacrificing per
 
 ## Features
 
-- **Easy**: there's barely anything you need to learn before you can start using Overstated, you just have wrap your app with [`Provider`](#provider), define some initial state and some methods for updating it in a [`Store`](#store) and then access the state and methods you need in your components either via the [`useStore`](#useStore) hook or [`connect`](#connect).
+- **Easy**: there's barely anything you need to learn before you can start using Overstated, you just have to wrap your app with [`Provider`](#provider), define some initial state and some methods for updating it in a [`Store`](#store) and then access the state and methods you need in your components either via the [`useStore`](#useStore) hook or [`connect`](#connect).
 - **Performant**: Overstated has been designed from the ground up with performance in mind, everything you need to write very performant applications (selector function, [`autosuspend`](#autosuspend), [`debug`](#debug)) is built-in.
-- **Scalable**: you can write big apps with this. You can [`connect`](#connect) to multiple stores, [`compose`](#compose) them easily and write [`middlewares`](#middlewares).
+- **Scalable**: you can write big apps with this. You can [`connect`](#connect) to multiple stores with a single call, [`compose`](#compose) multiple stores easily and use [`middlewares`](#middlewares).
 - **TypeScript-ready**: Overstated has been written in TypeScript and enables you to get a _fully typed_ app with minimal effort.
 
 Check out the [FAQ](#faq) section for some commonly asked questions.
@@ -16,17 +16,15 @@ Check out the [FAQ](#faq) section for some commonly asked questions.
 ## Install
 
 ```sh
-npm install --save overstated
+npm install --save overstated@2.0.0-beta.0
 ```
 
 ## Usage
 
-Overstated provides the following APIs:
-
 - [`Provider`](#provider)
 - [`Store`](#store)
-  - [`core methods`](#core-methods)
-  - [`suspension`](#suspension)
+  - [`Core methods`](#core-methods)
+  - [`Suspension`](#suspension)
   - [`autosuspend`](#autosuspend)
   - [`middlewares`](#middlewares)
 - [`useStore`](#usestore)
@@ -54,7 +52,7 @@ render (
 ```
 
 - ℹ️ An error will be thrown if you forget to do this.
-- ℹ️ You can inject some stores that will be used instead of the regular ones via the `inject` attribute: `<Provider inject={[StoreOne, StoreTwo]}>`, this is useful for testing purposes.
+- ℹ️ You can inject some stores that will be used instead of the regular ones, even if you are pre-instantiating them, via the `inject` attribute: `<Provider inject={[StoreFoo, StoreBar]}>`, this is useful for testing purposes.
 
 #### `Store`
 
@@ -71,16 +69,16 @@ class Store<State> {
 }
 ```
 
-It is modeled after React components and works in a similar way:
+It is modeled after a React class component and it works in a similar way:
 
-- There's a `state`, which you must never mutate directly.
+- There's a `state` object, which you must _never_ mutate directly.
 - There's a `setState` method, which:
   - Can accept either a new state object (which will be merged with the current one) or a function, which will be called with the current state as its first argument, which should return a new state object.
   - Can accept a callback function, which will be called once the state has been updated.
   - Returns a promise, which you can `await` if you need to wait until the state has been updated.
 
-- ℹ️ _Never_ mutate the state directly (`this.state.foo = 123`), always use `setState`.
-- ℹ️ If the next state depends on the current state you should call `setState` with a function, to make sure that you're computing the next state properly.
+- ℹ️ _Never_ mutate the state directly (`this.state.foo = 123`), always use `setState` (`this.setState ({ foo: 123 })`).
+- ℹ️ If the next state depends on the current state you should call `setState` with a function, to make sure that the state is computed properly and you aren't using an older version of the state object.
 
 You define your stores by extending the default one:
 
@@ -101,14 +99,14 @@ class CounterStore extends Store<{value: number}> {
 ```
 
 - ℹ️ If you're using TypeScript you should provide the type of the state object.
-- ℹ️ If the next state depends on the current state you should call `setState` with a function, to make sure that you're computing the next state properly.
+- ℹ️ If the next state depends on the current state you should call `setState` with a function, to make sure that the state is computed properly and you aren't using an older version of the state object.
 - ℹ️ You should always define your methods like this: `foo = () => {}` rather than like this: `foo () {}` so that you will never have to call `Function#bind` on them when using them.
-- ℹ️ If your method is mutating the state you should always `return` the value returned by `setState`, so that other methods can `await` it if needed.
+- ℹ️ If your method is updating the state you should always `return` the value returned by `setState`, so that other methods can `await` it if needed.
 - ℹ️ In general stores are just plain classes, so testing them is easy.
 
 ###### Suspension
 
-Overstated's stores have the ability to "suspend" React re-renders that would otherwise occur because of state changes, this is useful when you want to update the state many times but only want to cause one re-render. This is the interface:
+Overstated's stores have the ability to "suspend" React re-renders that would otherwise occur when their state changes, this is useful when you want to update the state many times but only want to cause one re-render. This is the related interface:
 
 ```ts
 class Store {
@@ -119,16 +117,16 @@ class Store {
 ```
 
 - The `suspend` method allows you to suspend re-renders.
-- The `unsuspend` method allows you to unsuspend re-renders. If before calling `unsuspend` a re-render have been prevented it will now be triggered.
+- The `unsuspend` method allows you to unsuspend re-renders: if before calling `unsuspend` a re-render has been prevented it will now be triggered.
   - Can accept a callback function, which will be called after any potential re-renders caused by this function.
 - The `isSuspended` method allows you to check if re-renders are currenly suspended.
 
-- ℹ️ If you call `suspend` 3 times you should also call `unsuspend` 3 times to resume operating as normal.
-- ℹ️ Using this APIs directly can be cumbersome, as you'd probably want to use it in all of your methods that update the state, and you'll have to make sure that `unsuspend` gets called even if your methods throw an error. Instead you should use [`autosuspend`](#autosuspend), which takes care of everything for you.
+- ℹ️ If for instance you call `suspend` 3 times you should also call `unsuspend` 3 times to resume operating as normal.
+- ℹ️ Using this APIs directly can be cumbersome, as you'd probably want to use it in all of your methods that update the state, and you'd have to make sure that `unsuspend` gets properly called even if your methods throw an error, otherwise re-renders will remain suspended forever. Instead you should use [`autosuspend`](#autosuspend), which takes care of everything for you.
 
 ###### `autosuspend`
 
-`autosuspend` is a way to automatically and safely [`suspend`](#suspension) React renders when a method gets called and unsuspend them right before returning from it. This is useful for ensuring that even if your methods update the state many times they only cause 1 re-render. You might not want this behaviour, so it's opt-in:
+`autosuspend` is a method for automatically and safely [`suspend`](#suspension)-ing React re-renders when a method gets called and unsuspending them right before returning from it. This is useful for ensuring that even if your methods update the state many times they only cause 1 re-render. You might not want this behavior, so it's opt-in:
 
 ```ts
 import CounterStore from './counter_store';
@@ -141,21 +139,21 @@ The `autosuspend` method accepts an option object with the following shape:
 ```ts
 const options = {
   bubbles: Infinity, // How many levels to bubble up the suspension
-  methods: /^(?!_|middleware|(?:(?:get|has|is)(?![a-z0-9])))/i // Methods matching this regex will be autosuspended
+  methods: /^(?!_|(?:(?:get|has|is)(?![a-z0-9])))/i // Methods matching this regex will be autosuspended
 };
 ```
 
-- `bubbles` ensures that parent stores (read more about them in the [`compose`](#compose) section) are suspended too.
-- `methods` is a regex, if your method's name matches that regex then it will be autosuspended. By default methods starting with `_`, `middleware`, `get`, `has` or `is` won't be autosuspended, as we are assuming that those won't be mutating the state and middlewares shouldn't be autosuspended.
+- `bubbles` ensures that parent stores (read more about them in the [`compose`](#compose) section) get suspended too, generally you won't need to set this option manually.
+- `methods` is a regex, if your method's name matches that regex then it will be autosuspended. By default methods starting with `_`, `get`, `has` or `is` won't be autosuspended, as we are assuming that those won't be updating the state.
 
 - ℹ️ If you try to autosuspend a store twice an error will be thrown.
 - ℹ️ When autosuspending a store its children stores (if any) will be autosuspended too, read more about them in the [`compose`](#compose) section.
-- ℹ️ Since this relies on the individual methods' names you'll have to make sure that your minifier isn't minifing function names.
 - ℹ️ You can also set those options in each store's class as the value of their `autosuspendOptions` instance property.
+- ℹ️ Since this relies on the individual methods' names you'll have to make sure that your minifier isn't minifing function names.
 
 ###### `middlewares`
 
-You can register and unregister middlewares of reach store, they will be called _every time_ the store gets updated, including if it was updated from within a middleware, and will receive the previous state object as their first argument. This is the interface:
+You can register and unregister middlewares on each store, they will be called _every time_ the store gets updated, including if it was updated from within a middleware, and they will receive the previous state object as their first argument. This is the related interface:
 
 ```ts
 class Store {
@@ -187,13 +185,13 @@ class MyStore extends Store {
 ```
 
 - ℹ️ You should use as few middlewares as possible, as they might get called very often.
-- ℹ️ Updating the state from within a middleware causes all middlewares affected by that to be called again, so you should avoid doing so if possible.
+- ℹ️ Updating the state from within a middleware also causes all middlewares affected by that to be called again, so you should avoid doing so if possible.
 - ℹ️ Registering middlewares in parent stores (read more about them in the [`compose`](#compose) section) is discouraged, as they will also get called if a children store's state is updated.
-- ℹ️ It's good practice to name your middlewares `middleware*`, as that makes it clear that those are middlewares, and also the [`autosuspend`](#autosuspend) method is relying on this by default.
+- ℹ️ It's good practice to name your middlewares `middleware*`, as that makes it clear that those are middlewares.
 
 #### `useStore`
 
-`useStore` is a React [hook](https://reactjs.org/docs/hooks-intro.html) for accessing a store's state and methods from within a component. You should always use `useStore`, unless you can't use React hooks, instead of [`connect`](#connect) because it preserves your TypeScript types completely. This is its interface:
+`useStore` is a React [hook](https://reactjs.org/docs/hooks-intro.html) for accessing a store's state and methods from within a component. You should always use `useStore`, unless you can't use React hooks, instead of [`connect`](#connect), because it preserves your TypeScript types completely. This is its interface:
 
 ```ts
 useStore ( storeClassOrInstance, selector: store => R ) R
@@ -227,7 +225,7 @@ function Counter () {
 }
 ```
 
-- ℹ️ Every time the store's state changes Overstated will re-run the selector passed to `useStore` and compare it's previous return value with the current, if nothing changed we stop there, if something changed the component gets re-rendered.
+- ℹ️ Every time the store's state changes Overstated will re-run the selector passed to `useStore` and compare the previously returned value with the current one, if nothing changed we stop there, if something changed the component gets re-rendered.
 - ℹ️ If you pass `useStore` a pre-instantiated store then you won't need to retrieve its methods this way, but instead you can access them directly (`CounterStore.increment`), this has a couple of performance advantages:
   - The object returned by the selector will be slightly faster to compare against the previous one.
   - If in a component you don't need to access any state at all from a selector, but only need to access its methods, then you can entirely avoid using `useStore` for that component.
@@ -272,7 +270,7 @@ The options object supports the following options:
 
 #### `compose`
 
-`compose` allows you to express a `parent <-> child` relationship between your stores, so that a parent store has access to its children and the children have access to their parent (and as a consequence to each other too). This is useful because as your app grows you might want to split your app's state and methods into multiple stores, but you might still want to retrieve state/methods from a single store and with a single [`useState`](#usestate) call. This is its interface:
+`compose` allows you to set a `parent <-> child` relationship between your stores, so that a parent store has access to its children and the children have access to their parent (and as a consequence to each other too). This is useful because as your app grows you might want to split your app's state and methods into multiple stores that can talk to each other.
 
 ```ts
 compose ({
@@ -335,8 +333,7 @@ It works like this:
 4. If the stores passed to `compose` aren't already instantiated they will be instantiated right when the parent store itself is instantiated.
 5. Finally whenever a child store's state gets updated the parent's state will also be updated: the content of the state will be the same but the state itself will be a different object, this is done in order to ensure that if you connect to a parent store via [`useStore`](#usestore) or [`connect`](#connect) your component will re-render properly also when the children stores get updated. For the same reason your [`middlewares`](#middlewares) registered in a parent store will also get called when the children's stores get updated.
 
-- ℹ️ Using `compose` may come with a slight performance penalty to your app, as if you're now connecting to a parent store via [`useStore`](#usestore) or [`connect`](#connect) your components will also attempt to re-render when stores that your components potentially don't care about get updated.
-- ℹ️ If across your app you want to connect both to a parent store and its children stores directly you'll have to pass to `compose` pre-instantiated stores, otherwise there will be duplicated stores.
+- ℹ️ It's important to note that if you pass a parent store to [`useStore`](#usestore) or [`connect`](#connect) then your component could potentially attempt to re-render even when state from other stores which it doesn't care about gets updated. To avoid this potentially significant performance penalty you should instead, whenever possible, pre-instantiate your parent store and then pass the child store you need directly (`MyParentStore.foo` rather than `MyParentStore`) to [`useStore`](#usestore) or [`connect`](#connect).
 
 #### `debug`
 
@@ -348,9 +345,9 @@ This is its interface:
 
 ```ts
 debug ({
-  collapsed: false, // Wether the logged group should be collapsed
-  logStateDiffChanges: true, // Wether to log diffs (added, updated, removed) state changes
-  logStateFullChanges: true // Wether to log the previous and current state in their entirity
+  collapsed: false, // Whether the logged group should be collapsed
+  logStateDiffChanges: true, // Whether to log diffs (added, updated, removed) state changes
+  logStateFullChanges: true // Whether to log the previous and current state in their entirity
 });
 ```
 
@@ -362,7 +359,7 @@ import {debug} from 'overstated';
 debug ();
 ```
 
-Once called `debug` also defines a global `OVERSTATED` object, which you can access from the devtools. This is its interface:
+Once called `debug` also defines a global object named `OVERSTATED`, which you can access from the devtools. This is its interface:
 
 ```ts
 window.OVERSTATED = {
@@ -380,11 +377,13 @@ OVERSTATED.states.CounterStore; // If you want to access a store's state quickly
 OVERSTATED.log (); // If you want to see all your stores' states at once
 ```
 
-- ℹ️ It's important to call `debug` before rendering the app and before manually instantiating any stores, in case you want to take that path.
+- ℹ️ It's important to call `debug` before rendering the app and before manually instantiating any stores.
+
+- ℹ️ Make sure to enabled `debug` only during development.
 
 #### `Hooks`
 
-`Hooks` provides a simple way to "hook" into Overstated's internal events. Each hook as the following interface:
+`Hooks` provides a simple way to "hook" into Overstated's internal events. Each hook has the following interface:
 
 ```ts
 class Hook {
@@ -406,9 +405,17 @@ const Hooks = {
 };
 ```
 
+You can use hooks like so:
+
+```ts
+import {Hooks} from 'overstated';
+
+Hooks.store.new.subscribe ( store => console.log ( 'New store just instantiated:', store ) );
+```
+
 If you need some other hooks for your Overstated plugin let me know and I'll make sure to add it.
 
-> We currently don't have an official "Overstated DevTools Extension", but it would be super cool to have one. I'm thinking basically one could implement everything implemented by [`debug`](#debug) but in a panel accessible from the browser's devtools. Perhaps some other cool features could be implemented like redux-style time travel, for restoring the app to a previous state in time. If somebody would like to implement this please do let me know! 😃
+> We currently don't have an official "Overstated DevTools Extension", but it would be super cool to have one. I'm thinking basically one could implement everything implemented by [`debug`](#debug) but in a panel accessible from the browser's devtools. Perhaps some other cool features could be implemented like time travel debugging, for restoring the app to a previous state in time. If somebody would like to implement this please do let me know! 😃
 
 ## FAQ
 
@@ -425,7 +432,7 @@ As you might have noticed Overstated is modeled after [Unstated](https://github.
 
 Some of these problems can be solved via third-party libraries, which me and others have written and are available [here](https://github.com/tiaanduplessis/awesome-unstated), but some things just can't be implemented in a performant manner when you're building on top of Unstated, for instance I ended up adding 5+ Higher-order-Components to each of my components that needed to subscribe to a store. And by implementing all this in the core you can do some nice things like skipping re-renders much earlier in the process.
 
-In the end I decided that basically rewriting Unstated, but with performance, more features and better TypeScript types, was the right option for me.
+In the end I decided that basically rewriting Unstated, but with performance in mind, more features and better TypeScript types, was the right option for me.
 
 I don't think there's _any_ reason to use Unstated over Overstated frankly. You can't even open an issue in Unstated's repository because the issues page is disabled.
 
@@ -452,7 +459,8 @@ To break that down into smaller to digest tips, roughly ordered by importance:
 - Always use a selector function.
 - Make sure your selectors are fast.
 - Use [`autosuspend`](#autosuspend) to make sure that 1 method call causes 1 re-render. You may not always want this, but in general I think it's a good starting point.
-- Write smaller stores that contain less state and connect to them directly rather than using [`compose`](#compose) and connecting to a parent store higher up in the hierarchy, so that your components will try to re-render less often and your selectors will be run less often.
+- Write smaller stores that contain less state, so that they each of them will trigger fewer re-renders.
+- If you're using [`compose`](#compose), pre-instantiate your parent store and pass the child store directly to [`useStore`](#usestore) or [`connect`](#connect), so that your component won't attempt to re-render if other stores' states change.
 - Use as few middlewares as possible, there's probably another way to implement the same thing which doesn't involves middlewares at all.
 - Make sure your middlewares are fast.
 - Pre-instantiate your stores and use their methods directly rather than retrieving them via [`useStore`](#usestore) or [`connect`](#connect).
