@@ -44,8 +44,9 @@ type ContextMap = Map<Function, StoreType>;
 type Context = ContextMap | null;
 
 type AutosuspendOptions = {
-  bubbles?: number,
-  methods?: RegExp
+  methods?: RegExp,
+  bubble?: boolean,
+  children?: boolean
 };
 
 /* INTERFACES */

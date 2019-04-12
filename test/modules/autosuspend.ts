@@ -40,7 +40,7 @@ describe ( 'autosuspend', it => {
 
   });
 
-  it ( 'works with composed stores', async t => {
+  it ( 'can suspend updates on parent stores', async t => {
 
     const [handler, res] = spy ( () => {} ),
           [handler2, res2] = spy ( () => {} );
@@ -66,7 +66,7 @@ describe ( 'autosuspend', it => {
 
   });
 
-  it ( 'suspends sub-stores', t => {
+  it ( 'can autosuspend children stores', t => {
 
     const isAutosuspended = fn => !!fn.name && fn.name.endsWith ( '_autosuspended' );
 
@@ -74,7 +74,19 @@ describe ( 'autosuspend', it => {
 
     store.autosuspend ();
 
-    t.true ( isAutosuspended ( store.isLoaded ) );
+    t.true ( isAutosuspended ( store.counter.increment ) );
+
+  });
+
+  it ( 'can not autosuspend children stores', t => {
+
+    const isAutosuspended = fn => !!fn.name && fn.name.endsWith ( '_autosuspended' );
+
+    const store = new App ();
+
+    store.autosuspend ({ children: false });
+
+    t.false ( isAutosuspended ( store.counter.increment ) );
 
   });
 

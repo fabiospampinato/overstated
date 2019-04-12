@@ -138,13 +138,15 @@ The `autosuspend` method accepts an option object with the following shape:
 
 ```ts
 const options = {
-  bubbles: Infinity, // How many levels to bubble up the suspension
-  methods: /^(?!_|(?:(?:get|has|is)(?![a-z0-9])))/i // Methods matching this regex will be autosuspended
+  methods: /^(?!_|(?:(?:get|has|is)(?![a-z0-9])))/i, // Methods matching this regex will be autosuspended
+  bubble: true, // Whether to bubble up the suspension to parents
+  children: true // Whether to autosuspend children too
 };
 ```
 
-- `bubbles` ensures that parent stores (read more about them in the [`compose`](#compose) section) get suspended too, generally you won't need to set this option manually.
 - `methods` is a regex, if your method's name matches that regex then it will be autosuspended. By default methods starting with `_`, `get`, `has` or `is` won't be autosuspended, as we are assuming that those won't be updating the state.
+- `bubble` checks whether parent stores (read more about them in the [`compose`](#compose) section) should get suspended too, generally you won't need to set this option manually.
+- `children` checks whether children stores (read more about them in the [`compose`](#compose) section) should get autosuspended too, generally you won't need to set this option manually.
 
 - ℹ️ If you try to autosuspend a store twice an error will be thrown.
 - ℹ️ When autosuspending a store its children stores (if any) will be autosuspended too, read more about them in the [`compose`](#compose) section.

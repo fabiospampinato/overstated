@@ -13,8 +13,9 @@ enum Methods {
 const cache = new Map<StoreType, boolean> ();
 
 const defaultOptions: AutosuspendOptions = {
-  bubbles: Infinity, // How many levels to bubble up the suspension
-  methods: /^(?!_|(?:(?:get|has|is)(?![a-z0-9])))/i // Methods matching this regex will be autosuspended
+  methods: /^(?!_|(?:(?:get|has|is)(?![a-z0-9])))/i, // Methods matching this regex will be autosuspended
+  bubble: true, // Whether to bubble up the suspension to parents
+  children: true // Whether to autosuspend children too
 };
 
 function autosuspend ( store: StoreType, storeOptions: AutosuspendOptions | false | undefined = store.autosuspendOptions ) {
@@ -35,7 +36,7 @@ function autosuspend ( store: StoreType, storeOptions: AutosuspendOptions | fals
 
     if ( method instanceof Store ) {
 
-      if ( cache.get ( store ) ) return;
+      if ( !options.children || cache.get ( method ) ) return;
 
       return autosuspend ( method, options );
 
@@ -49,13 +50,13 @@ function autosuspend ( store: StoreType, storeOptions: AutosuspendOptions | fals
 
       const targets = [store];
 
-      let target = store,
-          bubbles = options.bubbles;
+      let target = store;
 
-      while ( bubbles && target.ctx && target.ctx[method] ) {
-        target = target.ctx;
-        bubbles -= 1;
-        targets.push ( target );
+      if ( options.bubble ) {
+        while ( target.ctx && target.ctx[method] ) {
+          target = target.ctx;
+          targets.push ( target );
+        }
       }
 
       return targets;
