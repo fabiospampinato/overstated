@@ -348,6 +348,7 @@ This is its interface:
 ```ts
 debug ({
   collapsed: false, // Whether the logged group should be collapsed
+  logNewStores: false, // Whether to log when a new store is instantiated
   logStateDiffChanges: true, // Whether to log diffs (added, updated, removed) state changes
   logStateFullChanges: true // Whether to log the previous and current state in their entirity
 });

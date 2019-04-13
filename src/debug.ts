@@ -9,6 +9,7 @@ import {isEmptyObject, isShallowEqual, padLeft} from './utils';
 
 const defaultOptions: DebugOptions = {
   collapsed: false,
+  logNewStores: false,
   logStateDiffChanges: true,
   logStateFullChanges: true
 };
@@ -37,6 +38,10 @@ function debug ( options: DebugOptions = {} ) {
     const {name} = store.constructor;
 
     OVERSTATED.stores[name] = store;
+
+    if ( options.logNewStores ) {
+      console.log ( 'New store\n ', store );
+    }
 
     if ( options.logStateFullChanges || options.logStateDiffChanges ) {
 

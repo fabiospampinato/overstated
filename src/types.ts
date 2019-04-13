@@ -36,6 +36,7 @@ type ConnectData = [ConnectProps, StoreType[]];
 
 type DebugOptions = {
   collapsed?: boolean,
+  logNewStores?: boolean,
   logStateDiffChanges?: boolean,
   logStateFullChanges?: boolean
 };
