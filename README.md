@@ -52,7 +52,7 @@ render (
 ```
 
 - ℹ️ An error will be thrown if you forget to do this.
-- ℹ️ You can inject some stores that will be used instead of the regular ones, even if you are pre-instantiating them, via the `inject` attribute: `<Provider inject={[StoreFoo, StoreBar]}>`, this is useful for testing purposes.
+- ℹ️ You can inject some stores that will be used instead of the regular ones, even if you are pre-instantiating them, via the `inject` attribute: `<Provider inject={[StoreInstanceFoo, StoreInstanceBar]}>`, this is useful for testing purposes.
 
 #### `Store`
 

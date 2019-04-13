@@ -6,12 +6,12 @@ import appify from './appify';
 
 /* CONNECTIFY */
 
-const connectify = ( options?, component?, componentOptions? ) => {
+const connectify = ( options?, component?, componentOptions?, inject? ) => {
 
   const connected = connect ( options ),
         root = component ? ( connected as any )( component ) : connected;
 
-  return appify ( root, componentOptions );
+  return appify ( root, componentOptions, inject );
 
 };
 

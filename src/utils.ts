@@ -14,17 +14,29 @@ const DUMMY_ARR = [];
 
 function getStoreInstance<S extends StoreType> ( map: ContextMap, store: S | Constructor<S> ): S {
 
-  if ( store instanceof Store ) return store;
+  if ( store instanceof Store ) {
 
-  let instance = map.get ( store ) as S | undefined;
+    let instance = map.get ( store.constructor ) as S | undefined;
 
-  if ( instance ) return instance;
+    if ( instance ) return instance;
 
-  instance = new store ();
+    map.set ( store.constructor, store );
 
-  map.set ( store, instance );
+    return store;
 
-  return instance;
+  } else {
+
+    let instance = map.get ( store ) as S | undefined;
+
+    if ( instance ) return instance;
+
+    instance = new store ();
+
+    map.set ( store, instance );
+
+    return instance;
+
+  }
 
 }
 

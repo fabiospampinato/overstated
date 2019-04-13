@@ -6,10 +6,10 @@ import {Provider} from '../../dist';
 
 /* APPIFY */
 
-const appify = ( Root, rootOptions = {} ): React.FunctionComponent<any> => {
+const appify = ( Root, rootOptions = {}, inject = [] ): React.FunctionComponent<any> => {
 
   return () => (
-    <Provider>
+    <Provider inject={inject}>
       <Root {...rootOptions} />
     </Provider>
   );

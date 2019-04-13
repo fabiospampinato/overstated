@@ -76,7 +76,9 @@ describe ( 'connect', it => {
 
     it ( 'stores option (classes)', t => {
 
-      const stores = [Counter, Counter];
+      class Counter2 extends Counter {}
+
+      const stores = [Counter, Counter2];
 
       t.is ( htmlify ( { stores }, Mocks.render.map, shallow ), '<div>0</div><span>0</span>' );
 
@@ -84,7 +86,9 @@ describe ( 'connect', it => {
 
     it ( 'stores options (instances)', t => {
 
-      const stores = [new Counter (), new Counter ()];
+      class Counter2 extends Counter {}
+
+      const stores = [new Counter (), new Counter2 ()];
 
       stores[0].state.value = 123;
       stores[1].state.value = 321;
