@@ -2,7 +2,7 @@
 
 React state management library that's delightful to use, without sacrificing performance or scalability.
 
-[![Basic demo](resources/demo.png)](demo/index.tsx)
+[![Basic demo](resources/demo.png)](resources/demo.png)
 
 ## Features
 
@@ -77,9 +77,6 @@ It is modeled after a React class component and it works in a similar way:
   - Can accept a callback function, which will be called once the state has been updated.
   - Returns a promise, which you can `await` if you need to wait until the state has been updated.
 
-- ℹ️ _Never_ mutate the state directly (`this.state.foo = 123`), always use `setState` (`this.setState ({ foo: 123 })`).
-- ℹ️ If the next state depends on the current state you should call `setState` with a function, to make sure that the state is computed properly and you aren't using an older version of the state object.
-
 You define your stores by extending the default one:
 
 ```ts
@@ -99,6 +96,8 @@ class CounterStore extends Store<{value: number}> {
 ```
 
 - ℹ️ If you're using TypeScript you should provide the type of the state object.
+- ℹ️ _Never_ mutate the state directly (`this.state.foo = 123`), always use `setState` (`this.setState ({ foo: 123 })`).
+- ℹ️ Don't read state immediately after setting it, as it won't be updated immediately.
 - ℹ️ If the next state depends on the current state you should call `setState` with a function, to make sure that the state is computed properly and you aren't using an older version of the state object.
 - ℹ️ You should always define your methods like this: `foo = () => {}` rather than like this: `foo () {}` so that you will never have to call `Function#bind` on them when using them.
 - ℹ️ If your method is updating the state you should always `return` the value returned by `setState`, so that other methods can `await` it if needed.
