@@ -8,11 +8,19 @@ import connectify from '../utils/connectify';
 
 const Mocks = {
 
-  render: ({ store }) => <div>{store && store.get ()}</div>,
+  render: {
 
-  app ( store, injectedStore ) {
+    single: ({ store }) => <div>{store && store.get ()}</div>,
 
-    return connectify ( { store }, Mocks.render, {}, [injectedStore] );
+    compose: ({ store }) => <div>{store && store.counter && store.counter.get ()}</div>
+
+  },
+
+  app: {
+
+    single: ( store, injectedStore ) => connectify ( { store }, Mocks.render.single, {}, [injectedStore] ),
+
+    compose: ( store, injectedStore ) => connectify ( { store }, Mocks.render.compose, {}, [injectedStore] ),
 
   }
 

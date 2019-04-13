@@ -19,7 +19,7 @@ function compose<ParentStore extends StoreClass<any, any, any>> ( stores: { [ind
         for ( let name in stores ) {
 
           const store = stores[name],
-                instance = store instanceof Store ? store : new store ();
+                instance = store instanceof Store ? store : new store (); //FIXME: Use `getStoreInstance` instead, how can we do it while supporting nested `<Provider>`?
 
           instance.ctx = this;
           this[name] = instance;
