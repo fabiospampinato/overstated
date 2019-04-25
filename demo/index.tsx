@@ -4,6 +4,8 @@ import {debug, useStore, Store, Provider} from '../dist';
 
 debug ();
 
+const initialValue = 0
+
 class RandomStore extends Store<{ value: number }> {
   state = {
     value: Math.random ()
@@ -17,7 +19,7 @@ function Random () {
   const {value, randomize} = useStore ( RandomStore, store => ({
     value: store.state.value,
     randomize: store.randomize
-  }));
+  }), { value: initialValue });
   return (
     <div>
       <div>{value}</div>

@@ -8,14 +8,21 @@ import {getStoreInstance, isShallowEqual} from './utils';
 
 /* USE STORE */
 
-function useStore<S extends StoreType, R> ( store: S | Constructor<S>, selector: ( store: S ) => R ): R {
+function useStore<S extends StoreType, R> ( store: S | Constructor<S>, selector: ( store: S ) => R, initialState = {}): R {
 
   const context = useContext ( Context );
 
   if ( !context ) throw new Error ( 'You probably forgot to wrap your app with <Provider>' );
 
   const instance = getStoreInstance ( context, store ),
-        [data, setData] = useState ( () => selector ( instance ) ),
+        [data, setData] = useState(() => {
+          const state = selector(instance)
+
+          return {
+            ...state,
+            ...initialState
+          }
+        }),
         prevData = usePrevious ( data );
 
   useEffect ( () => {
