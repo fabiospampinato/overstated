@@ -23,7 +23,7 @@ function useStore<S extends StoreType, R> ( store: S | Constructor<S>, selector:
     function update () {
 
       const nextData = selector ( instance ),
-            shouldUpdate = !isShallowEqual ( prevData, nextData );
+            shouldUpdate = !isShallowEqual ( prevData.current, nextData );
 
       if ( !shouldUpdate ) return;
 
@@ -35,7 +35,7 @@ function useStore<S extends StoreType, R> ( store: S | Constructor<S>, selector:
 
     return () => instance.unsubscribe ( update );
 
-  }, [instance, selector] );
+  }, [instance] );
 
   return data;
 

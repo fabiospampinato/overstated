@@ -231,6 +231,7 @@ function Counter () {
   - The object returned by the selector will be slightly faster to compare against the previous one.
   - If in a component you don't need to access any state at all from a selector, but only need to access its methods, then you can entirely avoid using `useStore` for that component.
 - ℹ️ If you need to access state/methods from multiple stores just call `useStore` multiple times.
+- ℹ️ You shouldn't conditionally pass different selector functions to the same `useStore` call, if you need conditional output from the selector function either put the condition inside the function or wrap the condition in `useCallback`.
 
 #### `connect`
 
