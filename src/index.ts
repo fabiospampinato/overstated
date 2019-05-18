@@ -3,7 +3,6 @@
 
 /* IMPORT */
 
-import './types';
 import compose from './compose';
 import connect from './connect';
 import debug from './debug';

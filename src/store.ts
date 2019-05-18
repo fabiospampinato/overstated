@@ -1,6 +1,7 @@
 
 /* IMPORT */
 
+import {ExcludeProps, StoreType, Middleware, StateUpdater, AutosuspendOptions} from './types';
 import autosuspend from './autosuspend';
 import Hooks from './hooks';
 import Subscriber from './subscriber';

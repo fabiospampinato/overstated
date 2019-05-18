@@ -2,6 +2,7 @@
 /* IMPORT */
 
 import * as React from 'react';
+import {StoreType} from './types';
 import Context from './context';
 
 /* PROVIDER */

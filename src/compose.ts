@@ -1,6 +1,7 @@
 
 /* IMPORT */
 
+import {StoreClass, StoreLike} from './types';
 import Store from './store';
 import {DUMMY_OBJ} from './utils';
 

@@ -1,8 +1,9 @@
 
 /* IMPORT */
 
-import Store from './store';
 import * as _isShallowEqual from 'is-shallow-equal';
+import {Constructor, StoreType, ContextMap} from './types';
+import Store from './store';
 
 /* UTILS */
 

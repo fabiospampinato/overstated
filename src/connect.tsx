@@ -2,6 +2,7 @@
 /* IMPORT */
 
 import * as React from 'react';
+import {FunctionComponent, Component, StoreType, StoreLike, ConnectOptionsObj, ConnectOptions, ConnectProps, ConnectData, ContextMap} from './types';
 import Context from './context';
 import Store from './store';
 import {DUMMY_OBJ, DUMMY_ARR, getStoreInstance, isShallowEqual} from './utils';

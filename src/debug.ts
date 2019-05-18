@@ -2,6 +2,7 @@
 /* IMPORT */
 
 import {detailedDiff} from 'deep-object-diff';
+import {DebugOptions} from './types';
 import Hooks from './hooks';
 import {isEmptyObject, isShallowEqual, padLeft} from './utils';
 

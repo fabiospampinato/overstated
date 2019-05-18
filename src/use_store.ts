@@ -2,6 +2,7 @@
 /* IMPORT */
 
 import {useContext, useEffect, useState} from 'react';
+import {Constructor, StoreType} from './types';
 import Context from './context';
 import usePrevious from './use_previous';
 import {getStoreInstance, isShallowEqual} from './utils';

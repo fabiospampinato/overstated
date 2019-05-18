@@ -1,4 +1,8 @@
 
+/* IMPORT */
+
+import {SubscriberListener} from './types';
+
 /* SUBSCRIBER */
 
 class Subscriber<ListenerArgs extends any[] = []> {

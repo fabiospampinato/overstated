@@ -1,4 +1,8 @@
 
+/* IMPORT */
+
+import * as React from 'react';
+
 /* TYPES */
 
 type ExcludeProps<T> = { [P in keyof T]?: 'Error: You cannot use this particular property name' & number } & { [prop: string]: any; };
@@ -55,3 +59,7 @@ type AutosuspendOptions = {
 interface Constructor<Type> {
   new ( ...args: any[] ): Type
 }
+
+/* EXPORT */
+
+export {Constructor, ExcludeProps, FunctionComponent, Component, StoreType, StoreClass, StoreLike, SubscriberListener, Middleware, StateUpdater, ConnectOptionsObj, ConnectOptions, ConnectProps, ConnectData, DebugOptions, ContextMap, Context, AutosuspendOptions};

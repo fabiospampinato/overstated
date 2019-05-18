@@ -1,6 +1,7 @@
 
 /* IMPORT */
 
+import {StoreType} from './types';
 import Subscriber from './subscriber';
 
 /* HOOKS */

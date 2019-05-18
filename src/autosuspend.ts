@@ -1,6 +1,7 @@
 
 /* IMPORT */
 
+import {StoreType, AutosuspendOptions} from './types';
 import Store from './store';
 
 /* AUTOSUSPEND */
