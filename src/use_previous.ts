@@ -5,6 +5,8 @@ import {useEffect, useRef} from 'react';
 
 /* USE PREVIOUS */
 
+//TODO: Publish as `react-use-previous`
+
 function usePrevious ( value ) {
 
   const ref = useRef ();

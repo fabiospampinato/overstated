@@ -1,6 +1,7 @@
+
 import * as React from 'react';
 import {render} from 'react-dom';
-import {debug, useStore, Store, Provider} from '../dist';
+import {compose, debug, useStore, Store, Provider} from '../dist';
 
 debug ();
 
@@ -13,10 +14,13 @@ class RandomStore extends Store<{ value: number }> {
   }
 };
 
+@compose ({ random: RandomStore }) // Using "compose" just for testing purposes
+class App extends Store<{}, undefined, { random: RandomStore }> {}
+
 function Random () {
-  const {value, randomize} = useStore ( RandomStore, store => ({
-    value: store.state.value,
-    randomize: store.randomize
+  const {value, randomize} = useStore ( App, app => ({
+    value: app.random.state.value,
+    randomize: app.random.randomize
   }));
   return (
     <div>

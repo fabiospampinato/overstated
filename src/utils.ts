@@ -47,6 +47,12 @@ function isEmptyObject ( x ) {
 
 }
 
+function isNativeClass ( x ) {
+
+  return typeof x === 'function' && /^class\s/.test ( Function.prototype.toString.call ( x ) );
+
+}
+
 function isPrimitive ( x ) {
 
   if ( typeof x === 'object' ) return x === null;
@@ -73,4 +79,4 @@ function padLeft ( str: string | number, length: number, padding: string | numbe
 
 /* EXPORT */
 
-export {DUMMY_OBJ, DUMMY_ARR, getStoreInstance, isEmptyObject, isPrimitive, isShallowEqual, padLeft};
+export {DUMMY_OBJ, DUMMY_ARR, getStoreInstance, isEmptyObject, isNativeClass, isPrimitive, isShallowEqual, padLeft};
