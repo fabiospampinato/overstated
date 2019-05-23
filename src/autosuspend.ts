@@ -1,6 +1,7 @@
 
 /* IMPORT */
 
+import callHooks from 'call-hooks';
 import {StoreType, AutosuspendOptions} from './types';
 import Store from './store';
 
@@ -77,47 +78,10 @@ function autosuspend ( store: StoreType, storeOptions: AutosuspendOptions | fals
 
     }
 
-    function handleResult ( result ) {
-
-      trigger ( Methods.unsuspend );
-
-      return result;
-
-    }
-
-    function handleError ( err: Error ) {
-
-      trigger ( Methods.unsuspend );
-
-      throw err;
-
-    }
-
-    function autosuspendWrapper () {
-
-      try {
-
-        trigger ( Methods.suspend );
-
-        const result = method.apply ( this, arguments );
-
-        if ( result instanceof Promise ) {
-
-          return result.then ( handleResult ).catch ( handleError );
-
-        } else {
-
-          return handleResult ( result );
-
-        }
-
-      } catch ( err ) {
-
-        return handleError ( err );
-
-      }
-
-    }
+    const autosuspendWrapper = callHooks ( method, {
+      before: () => trigger ( Methods.suspend ),
+      after: () => trigger ( Methods.unsuspend )
+    });
 
     try {
 
