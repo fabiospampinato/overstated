@@ -200,11 +200,12 @@ class MyStore extends Store {
 `useStore` is a React [hook](https://reactjs.org/docs/hooks-intro.html) for accessing a store's state and methods from within a component. You should always use `useStore`, unless you can't use React hooks, instead of [`connect`](#connect), because it preserves your TypeScript types completely. This is its interface:
 
 ```ts
-useStore ( storeClassOrInstance, selector: store => R ) R
+useStore ( storeClassOrInstance, selector: store => R, deps: ReadonlyArray<any> = [] ) R
 ```
 
 - The first argument can be either a store class or a pre-instantiated store.
 - The second argument is a selector (a function) which will receive the _instance_ of the passed store and will return something, whatever will be returned by the selector will also be the return value of the `useStore` call.
+- The third argument is an optional array of dependencies. If your selector relies on external dependencies you must include all of them in the `deps` array, like you would when using `useCallback`. By default the array of dependencies will be an empty array, so the first selector function will get reused indefinitely.
 
 You can use it like so:
 
@@ -236,7 +237,6 @@ function Counter () {
   - The object returned by the selector will be slightly faster to compare against the previous one.
   - If in a component you don't need to access any state at all from a selector, but only need to access its methods, then you can entirely avoid using `useStore` for that component.
 - ℹ️ If you need to access state/methods from multiple stores just call `useStore` multiple times.
-- ℹ️ You shouldn't conditionally pass different selector functions to the same `useStore` call, if you need conditional output from the selector function either put the condition inside the function or wrap the condition in `useCallback`.
 
 #### `connect`
 
