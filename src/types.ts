@@ -50,6 +50,8 @@ type Context = ContextMap | null;
 
 type AutosuspendOptions = {
   methods?: RegExp,
+  methodsInclude?: RegExp,
+  methodsExclude?: RegExp,
   bubble?: boolean,
   children?: boolean
 };

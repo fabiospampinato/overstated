@@ -16,6 +16,8 @@ const cache = new Map<StoreType, boolean> ();
 
 const defaultOptions: AutosuspendOptions = {
   methods: /^(?!_|(?:(?:get|has|is)(?![a-z0-9])))/i, // Methods matching this regex will be autosuspended
+  methodsInclude: undefined, // Methods matching this regex will be autosuspended, has higher priority over the "methods" regex
+  methodsExclude: undefined, // Methods matching this regex will be autosuspended, has higher priority over the "methods" regex and the "methodsInclude" regex
   bubble: true, // Whether to bubble up the suspension to parents
   children: true // Whether to autosuspend children too
 };
@@ -44,7 +46,7 @@ function autosuspend ( store: StoreType, storeOptions: AutosuspendOptions | fals
 
     }
 
-    if ( typeof method !== 'function' || proto[key] || !options.methods!.test ( key ) ) return; // Not an auto-suspendable method //TSC
+    if ( typeof method !== 'function' || proto[key] || ( options.methodsExclude && options.methodsExclude.test ( key ) ) || ( ( !options.methodsInclude || !options.methodsInclude.test ( key ) ) && ( !options.methods || !options.methods.test ( key ) ) ) ) return; // Not an auto-suspendable method
 
     function getTargets ( method: string ): StoreType[] {
 
