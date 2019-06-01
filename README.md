@@ -237,6 +237,9 @@ function Counter () {
   - The object returned by the selector will be slightly faster to compare against the previous one.
   - If in a component you don't need to access any state at all from a selector, but only need to access its methods, then you can entirely avoid using `useStore` for that component.
 - ℹ️ If you need to access state/methods from multiple stores just call `useStore` multiple times.
+- ℹ️ When using [`compose`](#compose) you may encounter the scenario where you need to access some methods from store `A`, but those methods actually access the state of store `B`, so passing store `A` to `useStore` won't properly update the component because the changes in state will happen in store `B`. There are 2 ways to solve this issue:
+  1. Pass [`compose`](#compose) a store higher-up in the hierarchy that has both store `A` and store `B` below itself.
+  2. Pre-instantiate your stores, pass store `B` to `useStore`, but then reference the pre-instantiated instance of store `A` inside your selector function. This solution, albeit slightly more performant, is discouraged because you'll have to reason about what stores' states your selector is actually accessing, and that's very error prone.
 
 #### `connect`
 
