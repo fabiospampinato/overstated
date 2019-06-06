@@ -16,7 +16,7 @@ Check out the [FAQ](#faq) section for some commonly asked questions.
 ## Install
 
 ```sh
-npm install --save overstated@2.0.0-beta.6
+npm install --save overstated
 ```
 
 ## Usage
