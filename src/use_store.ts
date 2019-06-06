@@ -49,7 +49,7 @@ function useStore<S extends StoreType, R> ( store: S | Constructor<S>, selector:
 
     return () => instance.unsubscribe ( update );
 
-  }, [instance] );
+  }, [instance, prevData] );
 
   return data;
 
