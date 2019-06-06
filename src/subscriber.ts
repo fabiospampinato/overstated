@@ -25,17 +25,19 @@ class Subscriber<ListenerArgs extends any[] = []> {
 
     if ( index < 0 ) return;
 
-    this.listeners.splice ( index, 1 );
+    this.listeners = this.listeners.filter ( l => l !== listener );
 
   }
 
   emit ( ...args: ListenerArgs ): void {
 
-    for ( let i = 0, l = this.listeners.length; i < l; i++ ) {
+    const emitArgs = arguments;
 
-      this.listeners[i].apply ( undefined, arguments );
+    this.listeners.forEach ( listener => {
 
-    }
+      listener.apply ( undefined, emitArgs );
+
+    });
 
   }
 

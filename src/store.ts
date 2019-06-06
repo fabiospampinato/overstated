@@ -77,11 +77,11 @@ class StoreBase<State extends {} = {}, ParentStore extends ( StoreType | undefin
 
       const result = Promise.resolve ();
 
-      for ( let i = 0, l = this.middlewares.length; i < l; i++ ) {
+      this.middlewares.forEach ( middleware => {
 
-        result.then ( () => this.middlewares[i].call ( this, prevState ) );
+        result.then ( () => middleware.call ( this, prevState ) );
 
-      }
+      });
 
       const end = () => {
 
@@ -155,7 +155,7 @@ class StoreBase<State extends {} = {}, ParentStore extends ( StoreType | undefin
 
     if ( index < 0 ) return;
 
-    this.middlewares.splice ( index, 1 );
+    this.middlewares = this.middlewares.filter ( m => m !== middleware );
 
   }
 
