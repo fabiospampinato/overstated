@@ -58,7 +58,6 @@
     "typescript"
   ],
   "dependencies": {
-    "@types/react": "^16.8.12",
     "call-hooks": "^1.0.0",
     "deep-object-diff": "^1.1.0",
     "is-shallow-equal": "^1.0.1",
@@ -68,6 +67,7 @@
     "react": ">=16.8"
   },
   "devDependencies": {
+    "@types/react": "^16.8.12",
     "ava": "^1.4.1",
     "ava-spec": "^1.1.1",
     "awesome-typescript-loader": "^5.2.1",
