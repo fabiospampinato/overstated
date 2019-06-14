@@ -15,7 +15,7 @@ enum Methods {
 const cache = new Map<StoreType, boolean> ();
 
 const defaultOptions: AutosuspendOptions = {
-  methods: /^(?!_|(?:(?:get|has|is)(?![a-z0-9])))/i, // Methods matching this regex will be autosuspended
+  methods: /^(?!_|(?:(?:get|has|is)(?![a-z0-9])))/, // Methods matching this regex will be autosuspended
   methodsInclude: undefined, // Methods matching this regex will be autosuspended, has higher priority over the "methods" regex
   methodsExclude: undefined, // Methods matching this regex will be autosuspended, has higher priority over the "methods" regex and the "methodsInclude" regex
   bubble: true, // Whether to bubble up the suspension to parents
