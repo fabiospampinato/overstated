@@ -3,6 +3,7 @@
 
 import areShallowEqual from  'are-shallow-equal';
 import {useContext, useEffect, useMemo, useRef, useState} from 'react';
+import useMounted from 'react-use-mounted';
 import usePrevious from 'react-use-previous';
 import {Constructor, StoreType} from './types';
 import Context from './context';
@@ -17,6 +18,7 @@ function useStore<S extends StoreType, R> ( store: S | Constructor<S>, selector:
   if ( !context ) throw new Error ( 'You probably forgot to wrap your app with <Provider>' );
 
   const instance = getStoreInstance ( context, store ),
+        mounted = useMounted (),
         selectorMemo = useMemo ( () => selector, deps ),
         selectorRef = useRef ( selectorMemo );
 
@@ -37,6 +39,8 @@ function useStore<S extends StoreType, R> ( store: S | Constructor<S>, selector:
 
     function update () {
 
+      if ( !mounted.current ) return;
+
       const nextData = selectorRef.current ( instance ),
             shouldUpdate = !areShallowEqual ( prevData.current, nextData );
 
@@ -50,7 +54,7 @@ function useStore<S extends StoreType, R> ( store: S | Constructor<S>, selector:
 
     return () => instance.unsubscribe ( update );
 
-  }, [instance, prevData] );
+  }, [mounted, instance, prevData] );
 
   return data;
 
