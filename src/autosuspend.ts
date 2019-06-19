@@ -40,6 +40,8 @@ function autosuspend ( store: StoreType, storeOptions: AutosuspendOptions | fals
 
     if ( method instanceof Store ) {
 
+      if ( method.ctx !== store ) return; // Ensuring it's a proper child originated from compose
+
       if ( !options.children || cache.get ( method ) ) return;
 
       return autosuspend ( method, options );
