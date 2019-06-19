@@ -71,7 +71,9 @@ class Store<State> {
 
 It is modeled after a React class component and it works in a similar way:
 
-- There's a `state` object, which you must _never_ mutate directly.
+- There's a `state` object, which:
+  - Must be a plain object, other kinds of data (primitives, arrays, functions etc.) aren't supported.
+  - You must _never_ mutate directly.
 - There's a `setState` method, which:
   - Can accept either a new state object (which will be merged with the current one) or a function, which will be called with the current state as its first argument, which should return a new state object.
   - Can accept a callback function, which will be called once the state has been updated.

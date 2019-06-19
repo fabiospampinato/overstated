@@ -8,7 +8,7 @@ import Subscriber from './subscriber';
 
 /* STORE */
 
-class StoreBase<State extends {} = {}, ParentStore extends ( StoreType | undefined ) = undefined, ChildrenStores extends { [index: string]: StoreType } = {}> extends Subscriber {
+class StoreBase<State extends object = {}, ParentStore extends ( StoreType | undefined ) = undefined, ChildrenStores extends { [index: string]: StoreType } = {}> extends Subscriber {
 
   state: State;
   ctx: ParentStore;
@@ -161,11 +161,11 @@ class StoreBase<State extends {} = {}, ParentStore extends ( StoreType | undefin
 
 }
 
-type Store<State extends {} = {}, ParentStore extends ( StoreType | undefined ) = undefined, ChildrenStores extends ExcludeProps<Store> = {}> = StoreBase<State, ParentStore, ChildrenStores> & ChildrenStores;
+type Store<State extends object = {}, ParentStore extends ( StoreType | undefined ) = undefined, ChildrenStores extends ExcludeProps<Store> = {}> = StoreBase<State, ParentStore, ChildrenStores> & ChildrenStores;
 
 const Store: {
   prototype: Store<any, any, {}>,
-  new <State extends {} = {}, ParentStore extends ( StoreType | undefined ) = undefined, ChildrenStores extends ExcludeProps<Store> = {}> (): Store<State, ParentStore, ChildrenStores>
+  new <State extends object = {}, ParentStore extends ( StoreType | undefined ) = undefined, ChildrenStores extends ExcludeProps<Store> = {}> (): Store<State, ParentStore, ChildrenStores>
 } = StoreBase as any;
 
 /* EXPORT */
