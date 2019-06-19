@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-import * as _isShallowEqual from 'is-shallow-equal';
+import areShallowEqual from 'are-shallow-equal';
 import {Constructor, StoreType, ContextMap} from './types';
 import Store from './store';
 
@@ -43,27 +43,13 @@ function getStoreInstance<S extends StoreType> ( map: ContextMap, store: S | Con
 
 function isEmptyObject ( x ) {
 
-  return _isShallowEqual ( x, DUMMY_OBJ );
+  return areShallowEqual ( x, DUMMY_OBJ );
 
 }
 
 function isNativeClass ( x ) {
 
   return typeof x === 'function' && /^class\s/.test ( Function.prototype.toString.call ( x ) );
-
-}
-
-function isPrimitive ( x ) {
-
-  if ( typeof x === 'object' ) return x === null;
-
-  return typeof x !== 'function';
-
-}
-
-function isShallowEqual ( a, b ) {
-
-  return isPrimitive ( a ) || isPrimitive ( b ) ? a === b : _isShallowEqual ( a, b );
 
 }
 
@@ -79,4 +65,4 @@ function padLeft ( str: string | number, length: number, padding: string | numbe
 
 /* EXPORT */
 
-export {DUMMY_OBJ, DUMMY_ARR, getStoreInstance, isEmptyObject, isNativeClass, isPrimitive, isShallowEqual, padLeft};
+export {DUMMY_OBJ, DUMMY_ARR, getStoreInstance, isEmptyObject, isNativeClass, padLeft};

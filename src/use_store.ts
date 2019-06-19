@@ -1,11 +1,12 @@
 
 /* IMPORT */
 
+import areShallowEqual from  'are-shallow-equal';
 import {useContext, useEffect, useMemo, useRef, useState} from 'react';
 import usePrevious from 'react-use-previous';
 import {Constructor, StoreType} from './types';
 import Context from './context';
-import {getStoreInstance, isShallowEqual} from './utils';
+import {getStoreInstance} from './utils';
 
 /* USE STORE */
 
@@ -37,7 +38,7 @@ function useStore<S extends StoreType, R> ( store: S | Constructor<S>, selector:
     function update () {
 
       const nextData = selectorRef.current ( instance ),
-            shouldUpdate = !isShallowEqual ( prevData.current, nextData );
+            shouldUpdate = !areShallowEqual ( prevData.current, nextData );
 
       if ( !shouldUpdate ) return;
 

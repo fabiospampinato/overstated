@@ -1,10 +1,11 @@
 
 /* IMPORT */
 
+import areShallowEqual from  'are-shallow-equal';
 import {detailedDiff} from 'deep-object-diff';
 import {DebugOptions, StoreType} from './types';
 import Hooks from './hooks';
-import {isEmptyObject, isShallowEqual, padLeft} from './utils';
+import {isEmptyObject, padLeft} from './utils';
 
 /* DEBUG */
 
@@ -80,7 +81,7 @@ function debug ( options: DebugOptions = {} ) {
 
         }
 
-        if ( options.logStateFullChanges && !isShallowEqual ( state, prevState ) ) {
+        if ( options.logStateFullChanges && !areShallowEqual ( state, prevState ) ) {
           console.log ( 'New state\n ', state );
           console.log ( 'Old state\n ', prevState );
         }

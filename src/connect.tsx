@@ -1,11 +1,12 @@
 
 /* IMPORT */
 
+import areShallowEqual from  'are-shallow-equal';
 import * as React from 'react';
 import {FunctionComponent, Component, StoreType, StoreLike, ConnectOptionsObj, ConnectOptions, ConnectProps, ConnectData, ContextMap} from './types';
 import Context from './context';
 import Store from './store';
-import {DUMMY_OBJ, DUMMY_ARR, getStoreInstance, isShallowEqual} from './utils';
+import {DUMMY_OBJ, DUMMY_ARR, getStoreInstance} from './utils';
 
 /* CONNECT COMPONENT */
 
@@ -36,7 +37,7 @@ class Connect extends React.Component<{ options: ConnectOptionsObj, context: Con
   shouldComponentUpdate ( nextProps ) {
 
     const nextData = this.getData ( nextProps ),
-          shouldUpdate = !this.props.options.selector || !isShallowEqual ( this.data[0], nextData[0] );
+          shouldUpdate = !this.props.options.selector || !areShallowEqual ( this.data[0], nextData[0] );
 
     this.updateData ( nextData );
 

@@ -59,9 +59,9 @@
   ],
   "dependencies": {
     "@types/react": "^16.8.12",
+    "are-shallow-equal": "^1.0.0",
     "call-hooks": "^1.0.0",
     "deep-object-diff": "^1.1.0",
-    "is-shallow-equal": "^1.0.1",
     "react-use-previous": "^1.0.0"
   },
   "peerDependencies": {
