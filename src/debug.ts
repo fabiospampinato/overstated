@@ -2,7 +2,7 @@
 /* IMPORT */
 
 import {detailedDiff} from 'deep-object-diff';
-import {DebugOptions} from './types';
+import {DebugOptions, StoreType} from './types';
 import Hooks from './hooks';
 import {isEmptyObject, isShallowEqual, padLeft} from './utils';
 
@@ -22,7 +22,7 @@ function debug ( options: DebugOptions = {} ) {
   const OVERSTATED = {
     stores: {},
     get states () {
-      return Object.entries ( OVERSTATED.stores ).reduce ( ( acc, [name, store] ) => {
+      return Object.entries ( OVERSTATED.stores ).reduce ( ( acc, [name, store]: [string, StoreType] ) => {
         acc[name] = store['state'];
         return acc;
       }, {} );
