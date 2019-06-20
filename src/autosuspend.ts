@@ -15,14 +15,15 @@ enum Methods {
 const cache = new Map<StoreType, boolean> ();
 
 const defaultOptions: AutosuspendOptions = {
+  children: true, // Whether to autosuspend children too
   methods: /^(?!_|(?:(?:get|has|is)(?![a-z0-9])))/, // Methods matching this regex will be autosuspended
   methodsInclude: undefined, // Methods matching this regex will be autosuspended, has higher priority over the "methods" regex
   methodsExclude: undefined, // Methods matching this regex will be autosuspended, has higher priority over the "methods" regex and the "methodsInclude" regex
-  bubble: true, // Whether to bubble up the suspension to parents
-  children: true // Whether to autosuspend children too
+  propagateUp: true, // Whether to propagate up the suspension to parents
+  propagateDown: true // Whether to propagate down the suspension to children
 };
 
-function autosuspend ( store: StoreType, storeOptions: AutosuspendOptions | false | undefined = store.autosuspendOptions ) {
+function autosuspend ( store: StoreType<any, any, any>, storeOptions: AutosuspendOptions | false | undefined = store.autosuspendOptions ) {
 
   if ( cache.get ( store ) ) throw new Error ( 'You can\'t autosuspend the same store multiple times' );
 
@@ -32,7 +33,64 @@ function autosuspend ( store: StoreType, storeOptions: AutosuspendOptions | fals
 
   const options: AutosuspendOptions = storeOptions ? Object.assign ( {}, defaultOptions, storeOptions ) : defaultOptions,
         proto = Store.prototype,
-        targetsCache: { [index: string]: StoreType[] } = {};
+        targets = getTargets ( store );
+
+  function getTargets ( store: StoreType ): StoreType[] {
+
+    let targets = [store];
+
+    if ( options.propagateUp ) {
+
+      targets = targets.concat ( getParents ( store ) );
+
+    }
+
+    if ( options.propagateDown ) {
+
+      targets = targets.concat ( getChildren ( store ) );
+
+    }
+
+    return targets;
+
+  }
+
+  function getParents ( store: StoreType ): StoreType[] {
+
+    const parents: StoreType[] = [];
+
+    while ( store.ctx ) {
+      store = store.ctx;
+      parents.push ( store );
+    }
+
+    return parents;
+
+  }
+
+  function getChildren ( store: StoreType ): StoreType[] {
+
+    let children: StoreType[] = [];
+
+    Object.keys ( store ).forEach ( key => {
+
+      const child = store[key];
+
+      if ( child instanceof Store ) {
+
+        if ( child.ctx !== store ) return; // Ensuring it's a proper child originated from compose
+
+        children.push ( child );
+
+        children = children.concat ( getChildren ( child ) );
+
+      }
+
+    });
+
+    return children;
+
+  }
 
   Object.keys ( store ).forEach ( key => {
 
@@ -50,29 +108,9 @@ function autosuspend ( store: StoreType, storeOptions: AutosuspendOptions | fals
 
     if ( typeof method !== 'function' || proto[key] || ( options.methodsExclude && options.methodsExclude.test ( key ) ) || ( ( !options.methodsInclude || !options.methodsInclude.test ( key ) ) && ( !options.methods || !options.methods.test ( key ) ) ) ) return; // Not an auto-suspendable method
 
-    function getTargets ( method: string ): StoreType[] {
-
-      if ( targetsCache[method] ) return targetsCache[method];
-
-      const targets = [store];
-
-      let target = store;
-
-      if ( options.bubble ) {
-        while ( target.ctx && target.ctx[method] ) {
-          target = target.ctx;
-          targets.push ( target );
-        }
-      }
-
-      return targets;
-
-    }
-
     function trigger ( id: Methods ) {
 
-      const method = Methods[id],
-            targets = getTargets ( method );
+      const method = Methods[id];
 
       for ( let i = 0, l = targets.length; i < l; i++ ) {
 

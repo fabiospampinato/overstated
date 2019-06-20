@@ -139,18 +139,20 @@ The `autosuspend` method accepts an option object with the following shape:
 
 ```ts
 const options = {
-  methods: /^(?!_|(?:(?:get|has|is)(?![a-z0-9])))/i, // Methods matching this regex will be autosuspended
+  children: true, // Whether to autosuspend children too
+  methods: /^(?!_|(?:(?:get|has|is)(?![a-z0-9])))/, // Methods matching this regex will be autosuspended
   methodsInclude: undefined, // Methods matching this regex will be autosuspended, has higher priority over the "methods" regex
   methodsExclude: undefined, // Methods matching this regex will be autosuspended, has higher priority over the "methods" regex and the "methodsInclude" regex
-  bubble: true, // Whether to bubble up the suspension to parents
-  children: true // Whether to autosuspend children too
+  propagateUp: true, // Whether to propagate up the suspension to parents
+  propagateDown: true // Whether to propagate down the suspension to children
 };
 ```
 
 - `methods` is a regex, if your method's name matches that regex then it will be autosuspended. By default methods starting with `_`, `get`, `has` or `is` won't be autosuspended, as we are assuming that those won't be updating the state.
 - `methodsInclude` is a regex, if your method's name matches that regex then it will be autosuspended, has higher proprity over `methods`.
 - `methodsExclude` is a regex, if your method's name matches that regex then it will _not_ be autosuspended, has higher proprity over `methods` and `methodsInclude`.
-- `bubble` checks whether parent stores (read more about them in the [`compose`](#compose) section) should get suspended too, generally you won't need to set this option manually.
+- `propagateUp` checks whether parent stores (read more about them in the [`compose`](#compose) section) should get suspended too, generally you won't need to set this option manually.
+- `propagateDown` checks whether children stores (read more about them in the [`compose`](#compose) section) should get suspended too, generally you won't need to set this option manually.
 - `children` checks whether children stores (read more about them in the [`compose`](#compose) section) should get autosuspended too, generally you won't need to set this option manually.
 
 - ℹ️ If you try to autosuspend a store twice an error will be thrown.

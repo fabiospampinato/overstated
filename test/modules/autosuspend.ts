@@ -66,6 +66,20 @@ describe ( 'autosuspend', it => {
 
   });
 
+  it ( 'can suspend updates on children stores', async t => {
+
+    const store = new App ();
+
+    store.foo = function () {
+      t.true ( this.counter.isSuspended () );
+      t.true ( this.deep.counter.isSuspended () );
+    };
+
+    store.autosuspend ();
+    store.foo ();
+
+  });
+
   it ( 'can autosuspend children stores', t => {
 
     const isAutosuspended = fn => !!fn.name && fn.name.endsWith ( '_autosuspended' );

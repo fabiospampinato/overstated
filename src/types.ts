@@ -49,11 +49,12 @@ type ContextMap = Map<Function, StoreType>;
 type Context = ContextMap | null;
 
 type AutosuspendOptions = {
+  children?: boolean,
   methods?: RegExp,
   methodsInclude?: RegExp,
   methodsExclude?: RegExp,
-  bubble?: boolean,
-  children?: boolean
+  propagateUp?: boolean,
+  propagateDown?: boolean
 };
 
 /* INTERFACES */
