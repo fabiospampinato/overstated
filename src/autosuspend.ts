@@ -32,65 +32,9 @@ function autosuspend ( store: StoreType<any, any, any>, storeOptions: Autosuspen
   cache.set ( store, true );
 
   const options: AutosuspendOptions = storeOptions ? Object.assign ( {}, defaultOptions, storeOptions ) : defaultOptions,
-        proto = Store.prototype,
-        targets = getTargets ( store );
-
-  function getTargets ( store: StoreType ): StoreType[] {
-
-    let targets = [store];
-
-    if ( options.propagateUp ) {
-
-      targets = targets.concat ( getParents ( store ) );
-
-    }
-
-    if ( options.propagateDown ) {
-
-      targets = targets.concat ( getChildren ( store ) );
-
-    }
-
-    return targets;
-
-  }
-
-  function getParents ( store: StoreType ): StoreType[] {
-
-    const parents: StoreType[] = [];
-
-    while ( store.ctx ) {
-      store = store.ctx;
-      parents.push ( store );
-    }
-
-    return parents;
-
-  }
-
-  function getChildren ( store: StoreType ): StoreType[] {
-
-    let children: StoreType[] = [];
-
-    Object.keys ( store ).forEach ( key => {
-
-      const child = store[key];
-
-      if ( child instanceof Store ) {
-
-        if ( child.ctx !== store ) return; // Ensuring it's a proper child originated from compose
-
-        children.push ( child );
-
-        children = children.concat ( getChildren ( child ) );
-
-      }
-
-    });
-
-    return children;
-
-  }
+        {propagateUp, propagateDown} = options,
+        methodOptions = {propagateUp, propagateDown},
+        proto = Store.prototype;
 
   Object.keys ( store ).forEach ( key => {
 
@@ -112,11 +56,7 @@ function autosuspend ( store: StoreType<any, any, any>, storeOptions: Autosuspen
 
       const method = Methods[id];
 
-      for ( let i = 0, l = targets.length; i < l; i++ ) {
-
-        targets[i][method]();
-
-      }
+      store[method]( methodOptions );
 
     }
 

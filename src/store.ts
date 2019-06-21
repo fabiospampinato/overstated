@@ -1,10 +1,11 @@
 
 /* IMPORT */
 
-import {ExcludeProps, StoreType, Middleware, StateUpdater, AutosuspendOptions} from './types';
+import {ExcludeProps, StoreType, Middleware, StateUpdater, AutosuspendOptions, SuspensionOptions} from './types';
 import autosuspend from './autosuspend';
 import Hooks from './hooks';
 import Subscriber from './subscriber';
+import {getStoreSuspensionTargets} from './utils';
 
 /* STORE */
 
@@ -87,7 +88,7 @@ class StoreBase<State extends object = {}, ParentStore extends ( StoreType | und
 
         this.__middlewaresCounter--;
 
-        return this.unsuspend ( callback );
+        return this.unsuspend ( undefined, callback );
 
       };
 
@@ -107,13 +108,21 @@ class StoreBase<State extends object = {}, ParentStore extends ( StoreType | und
 
   }
 
-  suspend () {
+  suspend ( options?: SuspensionOptions ) {
 
     this.__suspendCounter++;
 
+    if ( options ) { // Propagating the suspension
+
+      const targets = getStoreSuspensionTargets ( this, options );
+
+      targets.forEach ( store => store.suspend () );
+
+    }
+
   }
 
-  unsuspend ( callback?: Function ): Promise<void> {
+  unsuspend ( options?: SuspensionOptions, callback?: Function ): Promise<void> {
 
     if ( !this.isSuspended () ) {
 
@@ -124,6 +133,14 @@ class StoreBase<State extends object = {}, ParentStore extends ( StoreType | und
     }
 
     this.__suspendCounter--;
+
+    if ( options ) { // Propagating the suspension
+
+      const targets = getStoreSuspensionTargets ( this, options );
+
+      targets.forEach ( store => store.unsuspend () );
+
+    }
 
     if ( this.__suspendedUpdate && !this.isSuspended () ) return this.emit ( callback );
 

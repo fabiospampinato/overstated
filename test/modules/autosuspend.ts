@@ -5,6 +5,7 @@ import {describe} from 'ava-spec';
 import spy from 'call-spy';
 import App from '../mocks/stores/app';
 import Counter from '../mocks/stores/counter';
+import {getStoreSuspensionTargets} from '../../dist/utils';
 
 /* AUTOSUSPEND */
 
@@ -40,42 +41,33 @@ describe ( 'autosuspend', it => {
 
   });
 
-  it ( 'can suspend updates on parent stores', async t => {
-
-    const [handler, res] = spy ( () => {} ),
-          [handler2, res2] = spy ( () => {} );
+  it ( 'can suspend updates on parent stores', t => {
 
     const store = new App ();
 
-    store.counter.multiincrements = async function () {
-      await this.increment ();
-      await this.increment ();
-      await this.increment ();
+    store.deep.counter.foo = function () {
+      t.true ( store.isSuspended () );
+      t.true ( store.counter.isSuspended () );
+      t.true ( store.deep.isSuspended () );
+      t.true ( store.deep.counter.isSuspended () );
     };
 
-    store.subscribe ( handler );
-    store.counter.subscribe ( handler2 );
-
-    store.counter.autosuspend ();
-
-    await store.counter.multiincrements ();
-
-    t.is ( res.calls, 1 );
-    t.is ( res2.calls, 1 );
-    t.is ( store.counter.get (), 3 );
+    store.deep.counter.autosuspend ({ propagateUp: true });
+    store.deep.counter.foo ();
 
   });
 
-  it ( 'can suspend updates on children stores', async t => {
+  it ( 'can suspend updates on children stores', t => {
 
     const store = new App ();
 
     store.foo = function () {
-      t.true ( this.counter.isSuspended () );
-      t.true ( this.deep.counter.isSuspended () );
+      t.true ( store.counter.isSuspended () );
+      t.true ( store.deep.isSuspended () );
+      t.true ( store.deep.counter.isSuspended () );
     };
 
-    store.autosuspend ();
+    store.autosuspend ({ propagateDown: true });
     store.foo ();
 
   });

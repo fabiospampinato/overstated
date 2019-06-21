@@ -2,7 +2,7 @@
 /* IMPORT */
 
 import areShallowEqual from 'are-shallow-equal';
-import {Constructor, StoreType, ContextMap} from './types';
+import {Constructor, StoreType, ContextMap, SuspensionOptions} from './types';
 import Store from './store';
 
 /* UTILS */
@@ -41,6 +41,89 @@ function getStoreInstance<S extends StoreType> ( map: ContextMap, store: S | Con
 
 }
 
+function getStoreSuspensionTargets ( store: StoreType, options: SuspensionOptions ): StoreType[] {
+
+  const id = getStoreSuspensionTargetsId ( options ),
+        cache = store['__suspensionTargets'] || ( store['__suspensionTargets'] = {} );
+
+  if ( cache[id] ) return cache[id];
+
+  return cache[id] = getStoreSuspensionTargetsFresh ( store, options );
+
+}
+
+function getStoreSuspensionTargetsId ( options: SuspensionOptions ): number {
+
+  const {propagateUp, propagateDown} = options;
+
+  return ( propagateUp ? 0b01 : 0 ) + ( propagateDown ? 0b10 : 0 );
+
+}
+
+function getStoreSuspensionTargetsFresh ( store: StoreType, options: SuspensionOptions ): StoreType[] {
+
+  let targets: StoreType[] = [];
+
+  if ( options.propagateUp ) {
+
+    const parent = getStoreTopmostParent ( store );
+
+    if ( parent ) {
+
+      targets.push ( parent );
+
+      targets = targets.concat ( getStoreChildren ( parent, store ) );
+
+    }
+
+  }
+
+  if ( options.propagateDown ) {
+
+    targets = targets.concat ( getStoreChildren ( store ) );
+
+  }
+
+  return targets;
+
+}
+
+function getStoreTopmostParent ( store: StoreType ): StoreType | undefined {
+
+  if ( !store.ctx ) return;
+
+  let parent = store.ctx;
+
+  while ( parent.ctx ) parent = parent.ctx;
+
+  return parent;
+
+}
+
+function getStoreChildren ( store: StoreType, exclude?: StoreType ): StoreType[] {
+
+  let children: StoreType[] = [];
+
+  Object.keys ( store ).forEach ( key => {
+
+    const child = store[key];
+
+    if ( !( child instanceof Store ) ) return;
+
+    if ( child.ctx !== store ) return; // Ensuring it's a proper child originated from compose
+
+    if ( child === exclude ) return;
+
+    children.push ( child );
+
+    children = children.concat ( getStoreChildren ( child, exclude ) );
+
+  });
+
+  return children;
+
+}
+
 function isEmptyObject ( x ) {
 
   return areShallowEqual ( x, DUMMY_OBJ );
@@ -65,4 +148,4 @@ function padLeft ( str: string | number, length: number, padding: string | numbe
 
 /* EXPORT */
 
-export {DUMMY_OBJ, DUMMY_ARR, getStoreInstance, isEmptyObject, isNativeClass, padLeft};
+export {DUMMY_OBJ, DUMMY_ARR, getStoreInstance, getStoreSuspensionTargets, isEmptyObject, isNativeClass, padLeft};

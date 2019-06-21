@@ -111,14 +111,25 @@ Overstated's stores have the ability to "suspend" React re-renders that would ot
 
 ```ts
 class Store {
-  suspend (): void
-  unsuspend ( callback?: Function ): Promise<void>
+  suspend ( options?: SuspensionOptions ): void
+  unsuspend ( options?: SuspensionOptions, callback?: Function ): Promise<void>
   isSuspended (): boolean
 }
 ```
 
+The supported options object has the following interface:
+
+```ts
+{
+  propagateUp: false, // Whether to propagate up the suspension to parents
+  propagateDown: false // Whether to propagate down the suspension to children
+}
+```
+
 - The `suspend` method allows you to suspend re-renders.
+  - Can accept a options object, useful for propagating the suspension up to parent stores and/or down to child stores, read more about them in the [`compose`](#compose) section.
 - The `unsuspend` method allows you to unsuspend re-renders: if before calling `unsuspend` a re-render has been prevented it will now be triggered.
+  - Can accept a options object, useful for propagating the suspension up to parent stores and/or down to child stores, read more about them in the [`compose`](#compose) section.
   - Can accept a callback function, which will be called after any potential re-renders caused by this function.
 - The `isSuspended` method allows you to check if re-renders are currenly suspended.
 

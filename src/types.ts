@@ -57,6 +57,11 @@ type AutosuspendOptions = {
   propagateDown?: boolean
 };
 
+type SuspensionOptions = {
+  propagateUp?: boolean,
+  propagateDown?: boolean
+};
+
 /* INTERFACES */
 
 interface Constructor<Type> {
@@ -65,4 +70,4 @@ interface Constructor<Type> {
 
 /* EXPORT */
 
-export {Constructor, ExcludeProps, FunctionComponent, Component, StoreType, StoreClass, StoreLike, SubscriberListener, Middleware, StateUpdater, ConnectOptionsObj, ConnectOptions, ConnectProps, ConnectData, DebugOptions, ContextMap, Context, AutosuspendOptions};
+export {Constructor, ExcludeProps, FunctionComponent, Component, StoreType, StoreClass, StoreLike, SubscriberListener, Middleware, StateUpdater, ConnectOptionsObj, ConnectOptions, ConnectProps, ConnectData, DebugOptions, ContextMap, Context, AutosuspendOptions, SuspensionOptions};
