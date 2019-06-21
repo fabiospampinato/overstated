@@ -19,8 +19,8 @@ const defaultOptions: AutosuspendOptions = {
   methods: /^(?!_|(?:(?:get|has|is)(?![a-z0-9])))/, // Methods matching this regex will be autosuspended
   methodsInclude: undefined, // Methods matching this regex will be autosuspended, has higher priority over the "methods" regex
   methodsExclude: undefined, // Methods matching this regex will be autosuspended, has higher priority over the "methods" regex and the "methodsInclude" regex
-  propagateUp: true, // Whether to propagate up the suspension to parents
-  propagateDown: true // Whether to propagate down the suspension to children
+  propagateUp: false, // Whether to propagate up the suspension to parents
+  propagateDown: false // Whether to propagate down the suspension to children
 };
 
 function autosuspend ( store: StoreType<any, any, any>, storeOptions: AutosuspendOptions | false | undefined = store.autosuspendOptions ) {
