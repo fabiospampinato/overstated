@@ -2,7 +2,6 @@
 /* IMPORT */
 
 import areShallowEqual from  'are-shallow-equal';
-import {detailedDiff} from 'deep-object-diff';
 import {DebugOptions, StoreType} from './types';
 import Hooks from './hooks';
 import {isEmptyObject, padLeft} from './utils';
@@ -65,7 +64,8 @@ function debug ( options: DebugOptions = {} ) {
 
         if ( options.logStateDiffChanges ) {
 
-          const {added, updated, deleted} = detailedDiff ( prevState, state ) as any; //TSC
+          const {detailedDiff} = require ( 'deep-object-diff' ),
+                {added, updated, deleted} = detailedDiff ( prevState, state ) as any; //TSC
 
           if ( !isEmptyObject ( added ) ) {
             console.log ( 'Added\n ', added );
