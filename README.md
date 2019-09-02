@@ -92,7 +92,7 @@ class CounterStore extends Store<{value: number}> {
     return this.setState ( state => ({ value: state.value + 1 }) );
   }
   decrement = () => {
-    return this.setState ( state => ({ value: state.value + 1 }) );
+    return this.setState ( state => ({ value: state.value - 1 }) );
   }
 }
 ```
